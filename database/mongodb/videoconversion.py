@@ -5,7 +5,8 @@ from pymongo import MongoClient
 import ffmpy
 import time
 import os
-
+import websocket
+import json
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=logging.DEBUG)
 #  ffmpeg -i Game.of.Thrones.S07E07.1080p.mkv -vcodec mpeg4 -b 4000k -acodec mp2 -ab 320k converted.avi
@@ -16,7 +17,7 @@ class VideoConversion(object):
         self.client = MongoClient(_config_.get_database_host(), _config_.get_database_port())
         self.db = self.client[_config_.get_database_name()]
         self.video_conversion_collection = self.db[_config_.get_video_conversion_collection()]
-
+        self.url = _config_.get_video_status_callback_url()
 
 
     def find_one(self):
@@ -49,3 +50,15 @@ class VideoConversion(object):
 
         self.video_conversion_collection.update({'_id' : _id_}, { '$set' : {'targetPath' : converted}})
         self.video_conversion_collection.update({'_id' : _id_}, { '$set' : {'tstamp' : time.time()  }})
+
+        payload = dict()
+        payload["id"] = _id_;
+        payload["status"] = 0;
+
+        json_payload = json.dumps(payload)
+        logging.info("payload = %s", json_payload)
+
+        ws = websocket.create_connection(self.url)
+        ws.send(json_payload);
+        ws.close()
+

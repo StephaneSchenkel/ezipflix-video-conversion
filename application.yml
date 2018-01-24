@@ -8,6 +8,8 @@ spring :
         video-conversions : video_conversions
 conversion:
   messaging :
+    video-status:
+      url: ws://localhost:42308/video_status
     rabbitmq :
       conversion-exchange: video-conversion-exchange
       conversion-queue: video-conversion-queue
@@ -20,4 +22,5 @@ rabbitmq-server:
                         # sudo rabbitmqctl set_permissions -p ezip ezip ".*" ".*" ".*"
     username: ezip      # sudo rabbitmqctl add_user ezip pize
     password: pize
+
 

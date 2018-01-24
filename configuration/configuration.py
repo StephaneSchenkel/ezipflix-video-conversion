@@ -46,3 +46,6 @@ class Configuration(object):
 
     def get_video_conversion_collection(self):
         return self.configuration_data['spring']['data']['mongodb']['collections']['video-conversions']
+
+    def get_video_status_callback_url(self):
+        return self.configuration_data['conversion']['messaging']['video-status']['url']
