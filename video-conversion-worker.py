@@ -4,14 +4,8 @@ import logging
 
 from configuration.configuration import Configuration
 from messaging.videoconversionmessaging import VideoConversionMessaging
-from messaging.videostatuswebsocket import VideoStatusWebsocket
 from database.mongodb.videoconversion import VideoConversion
 from videoconvunixsocket.videoconversionunixsocket import VideoConversionUnixSocket
-
-from autobahn.asyncio.websocket import WebSocketClientProtocol, \
-    WebSocketClientFactory
-
-import asyncio
 
 
 if __name__ == '__main__':
@@ -32,15 +26,3 @@ if __name__ == '__main__':
     video_messaging = VideoConversionMessaging(configuration, video_conversion_service)
     video_unix_socket.setVideoConversionMessaging(video_messaging)
 
-#    factory = WebSocketClientFactory(configuration.get_video_status_callback_url())
-
-#    factory.protocol = VideoStatusWebsocket
-
-
-#    loop = asyncio.get_event_loop()
-#    cnxn = loop.create_connection(factory, '127.0.0.1', 42308)
-#    loop.run_until_complete(cnxn)
-
-
-#    loop.run_forever()
-#    loop.close()

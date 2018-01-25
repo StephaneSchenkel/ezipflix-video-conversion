@@ -9,7 +9,8 @@ spring :
 conversion:
   messaging :
     video-status:
-      url: ws://localhost:42308/video_status
+      url: wss://darkops:42308/video_status
+#      url: ws://darkops:42308/video_status
     rabbitmq :
       conversion-exchange: video-conversion-exchange
       conversion-queue: video-conversion-queue

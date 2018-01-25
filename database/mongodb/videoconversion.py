@@ -7,6 +7,7 @@ import time
 import os
 import websocket
 import json
+import ssl
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=logging.DEBUG)
 #  ffmpeg -i Game.of.Thrones.S07E07.1080p.mkv -vcodec mpeg4 -b 4000k -acodec mp2 -ab 320k converted.avi
@@ -58,7 +59,8 @@ class VideoConversion(object):
         json_payload = json.dumps(payload)
         logging.info("payload = %s", json_payload)
 
-        ws = websocket.create_connection(self.url)
+        ws = websocket.create_connection(self.url, sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs" : "ca.cert.pem"})
+#        ws = websocket.create_connection(self.url)
         ws.send(json_payload);
         ws.close()
 
