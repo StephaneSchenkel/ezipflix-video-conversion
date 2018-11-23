@@ -14,11 +14,12 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=log
 
 
 class VideoConversion(object):
-    def __init__(self, _config_):
+    def __init__(self, _config_, _fs_service_):
         self.client = MongoClient(_config_.get_database_host(), _config_.get_database_port())
         self.db = self.client[_config_.get_database_name()]
         self.video_conversion_collection = self.db[_config_.get_video_conversion_collection()]
         self.url = _config_.get_video_status_callback_url()
+        self.fs_service = _fs_service_
 
 
     def find_one(self):
@@ -39,6 +40,7 @@ class VideoConversion(object):
         #    logging.info(d)
 
     def convert(self, _id_, _filename_, _bucket_):
+        self.fs_service.downloadfile(_filename_, _bucket_)
         converted = _filename_.replace(".mkv", "-converted.avi")
         logging.info('ID = %s, URI = %s —› %s',  _id_, _filename_ , converted )
         ff = ffmpy.FFmpeg(
@@ -48,6 +50,7 @@ class VideoConversion(object):
         logging.info("FFMPEG = %s", ff.cmd)
         ff.run()
 
+        self.fs_service.uploadfile(converted, _bucket_)
 
         self.video_conversion_collection.update({'_id' : _id_}, { '$set' : {'targetPath' : converted}})
         self.video_conversion_collection.update({'_id' : _id_}, { '$set' : {'tstamp' : time.time()  }})

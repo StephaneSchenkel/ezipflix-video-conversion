@@ -6,6 +6,7 @@ from configuration.configuration import Configuration
 from messaging.videoconversionmessaging import VideoConversionMessaging
 from database.mongodb.videoconversion import VideoConversion
 from videoconvunixsocket.videoconversionunixsocket import VideoConversionUnixSocket
+from filesystem.videoconversionfilesystem import VideoConversionFilesystem
 
 
 if __name__ == '__main__':
@@ -21,8 +22,9 @@ if __name__ == '__main__':
 
 
     video_unix_socket = VideoConversionUnixSocket()
+    video_conversion_fs = VideoConversionFilesystem()
     video_unix_socket.start()
-    video_conversion_service = VideoConversion(configuration)
+    video_conversion_service = VideoConversion(configuration, video_conversion_fs)
     video_messaging = VideoConversionMessaging(configuration, video_conversion_service)
     video_unix_socket.setVideoConversionMessaging(video_messaging)
 
