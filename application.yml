@@ -6,22 +6,11 @@ spring :
       database : ezipflix
       collections :
         video-conversions : video_conversions
+
 conversion:
   messaging :
     video-status:
-      url: wss://darkops:42308/video_status
-#      url: ws://darkops:42308/video_status
-    rabbitmq :
-      conversion-exchange: video-conversion-exchange
-      conversion-queue: video-conversion-queue
-
-rabbitmq-server:
-  server: localhost
-  port: 5672
-  credentials:
-    vhost: ezip         # sudo rabbitmqctl add_vhost ezip
-                        # sudo rabbitmqctl set_permissions -p ezip ezip ".*" ".*" ".*"
-    username: ezip      # sudo rabbitmqctl add_user ezip pize
-    password: pize
-
-
+      url: ws://localhost:42308/video_status
+    googlepubsub :
+      project-id: tp-ezipeflix-ss
+      subscription-id: video-conversion-subscriber

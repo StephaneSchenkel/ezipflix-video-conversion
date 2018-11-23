@@ -38,11 +38,11 @@ class VideoConversion(object):
         #for d in self.video_conversion_collection.find():
         #    logging.info(d)
 
-    def convert(self, _id_, _uri_):
-        converted = _uri_.replace(".mkv", "-converted.avi")
-        logging.info('ID = %s, URI = %s —› %s',  _id_, _uri_ , converted )
+    def convert(self, _id_, _filename_, _bucket_):
+        converted = _filename_.replace(".mkv", "-converted.avi")
+        logging.info('ID = %s, URI = %s —› %s',  _id_, _filename_ , converted )
         ff = ffmpy.FFmpeg(
-                inputs={_uri_: None},
+                inputs={_filename_: None},
                 outputs={converted : '-y -vcodec mpeg4 -b 4000k -acodec mp2 -ab 320k' }
             )
         logging.info("FFMPEG = %s", ff.cmd)
@@ -59,7 +59,7 @@ class VideoConversion(object):
         json_payload = json.dumps(payload)
         logging.info("payload = %s", json_payload)
 
-        ws = websocket.create_connection(self.url, sslopt={"cert_reqs": ssl.CERT_REQUIRED, "ca_certs" : "ca.cert.pem"})
+        ws = websocket.create_connection(self.url)
 #        ws = websocket.create_connection(self.url)
         ws.send(json_payload);
         ws.close()

@@ -6,33 +6,12 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=log
 
 class Configuration(object):
     def __init__(self):
-        self.configuration_file = "/home/gil/PycharmProjects/video-converter/application.yml" # Euuuuuurk !
+        self.configuration_file = "C:\\Users\\SStephane\\Documents\\Archi\\video-conversion\\application.yml" # Euuuuuurk !
         self.configuration_data = None
 
         f = open(self.configuration_file, 'r')
         self.configuration_data = yaml.load(f.read())
         f.close()
-
-    def get_rabbitmq_host(self):
-        return self.configuration_data['rabbitmq-server']['server']
-
-    def get_rabbitmq_port(self):
-        return self.configuration_data['rabbitmq-server']['port']
-
-    def get_rabbitmq_vhost(self):
-        return self.configuration_data['rabbitmq-server']['credentials']['vhost']
-
-    def get_rabbitmq_password(self):
-        return self.configuration_data['rabbitmq-server']['credentials']['password']
-
-    def get_rabbitmq_username(self):
-        return self.configuration_data['rabbitmq-server']['credentials']['username']
-
-    def get_messaging_conversion_exchange(self):
-        return self.configuration_data['conversion']['messaging']['rabbitmq']['conversion-exchange']
-
-    def get_messaging_conversion_queue(self):
-        return self.configuration_data['conversion']['messaging']['rabbitmq']['conversion-queue']
 
     def get_database_host(self):
         return self.configuration_data['spring']['data']['mongodb']['host']
@@ -43,6 +22,11 @@ class Configuration(object):
     def get_database_name(self):
         return self.configuration_data['spring']['data']['mongodb']['database']
 
+    def get_subscription_id(self):
+        return self.configuration_data['conversion']['messaging']['googlepubsub']['subscription-id']
+
+    def get_project_id(self):
+        return self.configuration_data['conversion']['messaging']['googlepubsub']['project-id']
 
     def get_video_conversion_collection(self):
         return self.configuration_data['spring']['data']['mongodb']['collections']['video-conversions']
