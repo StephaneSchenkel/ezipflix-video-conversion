@@ -1,0 +1,96 @@
+@startuml
+node "ConversionServer" {
+[Java\n1.8]<<exe>>
+
+node "ezipflix-video-converter" {
+interface HTTP
+interface Websocket
+
+[VideoDispatcher\n1.0.0]<<jar>>
+[com.fasterxml.jackson.core.jackson-core\n2.9.7]<<jar>>
+[com.fasterxml.jackson.core.jackson-databind\n2.8.6]<<jar>>
+[com.google.cloud.google-cloud-datastore\n1.55.0]<<jar>>
+[com.google.cloud.google-cloud-pubsub\n1.53.0]<<jar>>
+[com.amazonaws.aws-java-sdk-s3\n1.11.466]<<jar>>
+
+[org.springframework.boot.spring-boot-starter-web]<<jar>>
+[org.springframework.boot.spring-boot-starter-websocket]<<jar>>
+[org.springframework.boot.spring-boot-starter]<<jar>>
+[org.springframework.boot.spring-boot-starter-jetty]<<jar>>
+
+[VideoDispatcher\n1.0.0] ..> [com.fasterxml.jackson.core.jackson-core\n2.9.7]
+[VideoDispatcher\n1.0.0] ..> [com.fasterxml.jackson.core.jackson-databind\n2.8.6]
+[VideoDispatcher\n1.0.0] ..> [com.google.cloud.google-cloud-datastore\n1.55.0]
+[VideoDispatcher\n1.0.0] ..> [com.google.cloud.google-cloud-pubsub\n1.53.0]
+[VideoDispatcher\n1.0.0] ..> [com.amazonaws.aws-java-sdk-s3\n1.11.466]
+[VideoDispatcher\n1.0.0] ..> [org.springframework.boot.spring-boot-starter-web]
+[VideoDispatcher\n1.0.0] ..> [org.springframework.boot.spring-boot-starter-websocket]
+[VideoDispatcher\n1.0.0] ..> [org.springframework.boot.spring-boot-starter]
+[VideoDispatcher\n1.0.0] ..> [org.springframework.boot.spring-boot-starter-jetty]
+
+Websocket -- [VideoDispatcher\n1.0.0]
+[VideoDispatcher\n1.0.0] -- HTTP
+}
+
+[Python\n3.7]<<exe>>
+
+node "ezipflix-video-conversion" {
+[video-conversion-worker\n1.0.0]<<py>>
+[PyYAML\n3.13]<<py>>
+[google-cloud-datastore\n1.7.2]<<py>>
+[google-cloud-pubsub\n0.39.0]<<py>>
+[boto3\n1.9.62]<<py>>
+[botocore\n1.12.62]<<py>>
+[ffmpy\n0.2.2]<<py>>
+[websocket-client\n0.54.0]<<py>>
+
+[video-conversion-worker\n1.0.0] ..> [Python\n3.7]
+[video-conversion-worker\n1.0.0] ..> [PyYAML\n3.13]
+[video-conversion-worker\n1.0.0] ..> [google-cloud-datastore\n1.7.2]
+[video-conversion-worker\n1.0.0] ..> [google-cloud-pubsub\n0.39.0]
+[video-conversion-worker\n1.0.0] ..> [boto3\n1.9.62]
+[video-conversion-worker\n1.0.0] ..> [botocore\n1.12.62]
+[video-conversion-worker\n1.0.0] ..> [ffmpy\n0.2.2]
+[video-conversion-worker\n1.0.0] ..> [websocket-client\n0.54.0]
+}
+
+[websocket-client\n0.54.0] --> Websocket : "use (inform task status)"
+
+[FFMpeg]<<exe>>
+[ffmpy\n0.2.2] --> [FFMpeg]
+
+[VideoDispatcher\n1.0.0] --> [Java\n1.8]
+}
+
+cloud "Amazon AWS" {
+interface REST
+[S3 API]
+[S3 Storage]
+[S3 API] ..> [S3 Storage]
+REST -- [S3 API]
+}
+
+cloud "Google Cloud" {
+interface rest
+[Google Cloud API]
+[PubSub]
+[Datastore]
+rest -- [Google Cloud API]
+[Google Cloud API] ..> [PubSub]
+[Google Cloud API] ..> [Datastore]
+}
+
+node "Client Computer" {
+[WebBrowser]
+}
+
+[WebBrowser] --> HTTP : "/convert"
+
+[boto3\n1.9.62] --> REST : "use (download & update)"
+[google-cloud-datastore\n1.7.2] --> rest : "use (update entity)"
+[google-cloud-pubsub\n0.39.0] --> rest : "use (subscribe to pubsub)"
+
+[com.amazonaws.aws-java-sdk-s3\n1.11.466] --> REST : "use (verify file)"
+[com.google.cloud.google-cloud-datastore\n1.55.0] --> rest : "use (create entity)"
+[com.google.cloud.google-cloud-pubsub\n1.53.0] --> rest : "use (publish message)"
+@enduml

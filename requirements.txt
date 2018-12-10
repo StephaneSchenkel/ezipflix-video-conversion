@@ -1,5 +1,7 @@
+websocket
 google-cloud-pubsub
 boto3
 botocore
 google-cloud-datastore
 ffmpy
+PyYAML
