@@ -1,4 +1,4 @@
-websocket
+websocket-client
 google-cloud-pubsub
 boto3
 botocore
